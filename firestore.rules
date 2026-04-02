@@ -1,0 +1,132 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: /site/product
+    // Document ID: product
+    // Fields:
+    //   - title: string (required)
+    //   - subtitle: string (required)
+    //   - description: string (required)
+    //   - features: list (required)
+    //
+    // Collection: /site/settings
+    // Document ID: settings
+    // Fields:
+    //   - siteName: string (required)
+    //   - contactEmail: string (required)
+    //   - contactPhone: string (required)
+    //
+    // Collection: /clients
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required)
+    //   - category: string (required)
+    //   - logoUrl: string (optional)
+    //
+    // Collection: /references
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (required)
+    //   - client: string (required)
+    //   - year: string (required)
+    //   - description: string (required)
+    //
+    // Collection: /inquiries
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required)
+    //   - email: string (required)
+    //   - phone: string (required)
+    //   - company: string (required)
+    //   - message: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+        request.auth.token.email == "wooji385@gmail.com"
+      );
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // Site configuration (product, settings, about, contact, whyfurie, categories)
+    match /site/{document} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin();
+    }
+
+    // Specific rule for visitor stats to allow public increment
+    match /site/stats {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['visitors']) &&
+                      request.resource.data.visitors == 1;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['visitors']) &&
+                      request.resource.data.visitors == resource.data.visitors + 1;
+      allow write: if isAdmin();
+    }
+
+    // Clients
+    match /clients/{clientId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // References
+    match /references/{referenceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Inquiries
+    match /inquiries/{inquiryId} {
+      allow read: if isAdmin();
+      allow create: if true; // Allow anyone to submit an inquiry
+      allow update, delete: if isAdmin();
+    }
+
+    // News
+    match /news/{newsId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Experts
+    match /experts/{expertId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Files (for persistence)
+    match /files/{fileId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Users (for RBAC)
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product Information",
+      "description": "Details about the FuriE product",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "description": { "type": "string" },
+        "logo": { "type": "string" },
+        "logoSize": { "type": "number" },
+        "offsetX": { "type": "number" },
+        "offsetY": { "type": "number" },
+        "brochureUrl": { "type": "string" },
+        "specs": { "type": "array" },
+        "features": { "type": "array" }
+      }
+    },
+    "Settings": {
+      "title": "Site Settings",
+      "description": "General configuration for the website",
+      "type": "object",
+      "properties": {
+        "siteName": { "type": "string" },
+        "siteLogo": { "type": "string" },
+        "primaryColor": { "type": "string" },
+        "heroTitle": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "logoHeight": { "type": "number" },
+        "logoMarginTop": { "type": "number" },
+        "logoMarginLeft": { "type": "number" },
+        "terms": { "type": "string" },
+        "privacy": { "type": "string" },
+        "emailPolicy": { "type": "string" }
+      }
+    },
+    "About": {
+      "title": "About Us",
+      "description": "Content for the About Us page",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "timeline": { "type": "array" }
+      }
+    },
+    "File": {
+      "title": "Uploaded File",
+      "description": "Metadata and content of an uploaded file",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "size": { "type": "string" },
+        "category": { "type": "string" },
+        "path": { "type": "string" },
+        "storagePath": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Client": {
+      "title": "Client",
+      "description": "A client company.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logo": { "type": "string" },
+        "description": { "type": "string" },
+        "website": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "Reference": {
+      "title": "Reference",
+      "description": "A project reference or case study.",
+      "type": "object",
+      "properties": {
+        "client": { "type": "string" },
+        "project": { "type": "string" },
+        "business": { "type": "boolean" },
+        "it": { "type": "boolean" },
+        "period": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "hideClientName": { "type": "boolean" }
+      },
+      "required": ["client", "project"]
+    },
+    "Inquiry": {
+      "title": "Inquiry",
+      "description": "A customer inquiry.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "company": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message"]
+    },
+    "News": {
+      "title": "News",
+      "description": "A news article or update.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["title", "date"]
+    }
+  },
+  "firestore": {
+    "/site/product": { "schema": "Product", "description": "Product data" },
+    "/site/settings": { "schema": "Settings", "description": "Global settings" },
+    "/site/about": { "schema": "About", "description": "About Us content" },
+    "/clients": { "schema": "Client", "description": "List of clients" },
+    "/references": { "schema": "Reference", "description": "List of references" },
+    "/inquiries": { "schema": "Inquiry", "description": "Customer inquiries" },
+    "/news": { "schema": "News", "description": "News articles" },
+    "/files": { "schema": "File", "description": "Uploaded files" }
+  }
+}
